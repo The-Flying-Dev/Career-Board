@@ -2,11 +2,11 @@ import React from "react";
 import JobList from "./JobList";
 
 
-  function App() {
+  function App(props) {
     return (
       <div>
         <h1>All Jobs</h1>
-        <JobList />
+        <JobList props={props} />
       </div>
     );
   }
