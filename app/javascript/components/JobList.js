@@ -3,11 +3,15 @@ import axios from "axios";
 //import * as qs from 'qs'
 import NewJobForm from "./NewJobForm";
 import Job from "./Job";
+import EditJob from "./EditJob";
 
 const JobList = props => {
 
   //initial state
-  const [jobs, setJobs] = useState([])
+  const [jobs, setJobs] = useState([]);
+  //editing job
+  const [editing, setEditing] = useState(false);
+  const [CurrentJob, setCurrentJob] = useState(initialFormState);
   
   //hook to get the data from rails api controller
   useEffect(() => {
@@ -50,20 +54,56 @@ const JobList = props => {
       .catch(error => console.log(error))
   };
 
+  //editing a job
+  const editJob = job => {
+    setEditing(true);
+    setCurrentJob({
+      id: job.id,
+      company: job.company,
+      positions: job.position,
+      description: job.description
+    })
+  };
+
+  const updateJob = (updatedJob) => {
+    setEditing(false);
+
+    const qs = require('qs');
+    axios.patch('/api/v1/jobs' + updateJob.id, qs.stringify(
+      {
+        job:{
+          company: updatedJob.company,
+          positions: updatedJob.position,
+          description: updatedJob.description
+        }
+      }
+    ))
+    .then(response => (console.log(response.data)));
+    setJobs(jobs.map(job => (job.id === updatedJob.id ? updatedJob : job)))
+  };
+
 
   return (
     <div>
       <div>
-        <NewJobForm addJob={addJob} />
+        {editing ? (
+          <EditJob
+            setEditing={setEditing}
+            CurrentJob={CurrentJob}
+            updateJob={updateJob}
+          />
+        ) : (
+          <NewJobForm addJob={addJob} initialFormState={initialFormState} />
+        )}
       </div>
       <br />
       <hr />
       {jobs.map((job, _) => (
-        <Job job={job} removeJob={removeJob} />
+        <Job job={job} removeJob={removeJob} editJob={editJob} editing={editing} />
       ))}
     </div>
   );
 };
 
 
-export default JobList
+export default JobList;
