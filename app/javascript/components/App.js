@@ -1,9 +1,12 @@
 import React from "react";
+import JobList from "./JobList";
+
 
   function App() {
     return (
       <div>
-        <h1>Hello There</h1>
+        <h1>All Jobs</h1>
+        <JobList />
       </div>
     );
   }

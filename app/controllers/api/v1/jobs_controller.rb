@@ -1,5 +1,5 @@
 module Api::V1 
-  class JobsController < ApllicationController
+  class JobsController < ApplicationController
 
     def index 
       @jobs = Job.all
