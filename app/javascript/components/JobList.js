@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 //import * as qs from 'qs'
 import NewJobForm from "./NewJobForm";
+import Job from "./Job";
 
 const JobList = props => {
 
@@ -20,6 +21,7 @@ const JobList = props => {
     description: ''
   };
 
+  //creating a job
   const addJob = job => {
     // qs - querystring parser that supports nesting and arrays
     const qs = require('qs');
@@ -39,16 +41,25 @@ const JobList = props => {
       setJobs([...jobs, job]);
   }
 
+  //delete a job
+  const removeJob = id => {
+    axios.delete('/api/v1/jobs/' + id)
+      .then(response => {
+        setJobs(jobs.filter(job => job.id !== id))
+      })
+      .catch(error => console.log(error))
+  };
+
 
   return (
     <div>
       <div>
-        <NewJobForm addJob={addJob} initialFormState={initialFormState} />
+        <NewJobForm addJob={addJob} />
       </div>
-      {jobs.map((job, index) => (
-        <div key={index}>
-          {job.company} | {job.position} | {job.description}
-        </div>
+      <br />
+      <hr />
+      {jobs.map((job, _) => (
+        <Job job={job} removeJob={removeJob} />
       ))}
     </div>
   );
